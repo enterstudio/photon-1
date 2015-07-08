@@ -63,47 +63,44 @@ header h1 {
 }
 
 /* Liste des images : sous la forme d’un mur d’images */
+
 #list-images {
-	text-align: left;
-	padding: 20px 0;
+	overflow: hidden;
 }
 
 #list-images .image_bloc {
-	text-align: center;
-	background: white;
-	display:inline-block;
-	margin: 1px;
-	line-height: 160px;
-	height: 160px;
-	width: 160px;
-	border: 1px solid #666;
-	border-radius: 3px;
-	border-color: black gray;
-	padding: 5px;
+	float: left;
+	margin: 4px;
+	border: 1px solid #eee;
+	box-sizing: content-box;
+	overflow: hidden;
 	position: relative;
 }
+
+#list-images .image_bloc img {
+	display: block;
+	width: auto;
+	height: 100%;
+}
+
 
 #list-images .image_bloc .spantop {
 	overflow: hidden;
 	opacity: 0;
-	text-shadow: 0 0 3px white, 0 0 3px white;
-	left: 0; /* counters the padding */
 	position: absolute;
 	background: rgba(255,255,255,.8);
 	width: 100%;
 	height: 0;
-	word-wrap: break-word;
-	top: 0;
-	border-radius: 3px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #list-images .image_bloc .spantop .bouton {
-	line-height: 32px;
 	height: 32px; width: 32px;
-	vertical-align: middle;
-	display: inline-block;
 	cursor: pointer;
 	text-decoration: none;
+	flex: 0 0 auto;
 }
 
 #list-images .image_bloc .spantop .bouton-lien {
@@ -128,12 +125,7 @@ header h1 {
 	line-height: 160px; height: 100%;
 }
 
-#list-images .image_bloc img {
-	border: 1px solid gray;
-	vertical-align: middle;
-	max-width: 160px;
-	max-height: 160px;
-}
+
 
 
 /* JS slideshow */
@@ -377,7 +369,7 @@ else {
 		$img_list = rm_dots_dir($sub_dir_contains);
 	
 		// show images
-		echo '<div id="list-images">';
+		echo '<div id="list-images">'."\n";
 		if (!empty($img_list)) {
 			$collection_count = count($img_list);
 			if (is_numeric($GLOBALS['start_list_count'])) {
@@ -385,16 +377,17 @@ else {
 			}
 
 			foreach ($img_list as $i => $image) {
-				echo '<div id="bloc_'.$i.'" data-img-url="'.$sub_dir.'/'.$image.'" data-img-name="'.$image.'" class="image_bloc">
-					<span class="spantop black">
-						<span title="Ouvrir Slideshow" class="bouton bouton-slide" onclick="slideshow(\'start\', '.$i.');"></span>
-						<a title="Voir" class="bouton bouton-lien" href="'.$sub_dir.'/'.$image.'">&nbsp;</a>
-						<a title="Télécharger" class="bouton bouton-lien" download href="'.$sub_dir.'/'.$image.'">&nbsp;</a>
-					</span>
-					<img id="img_'.$i.'" src="'.$sub_dir.'/'.$image.'" alt="'.htmlspecialchars($image).'">
-				</div>'."\n";
+				list($width, $height) = getimagesize($sub_dir.'/'.$image);
+				echo '<div id="bloc_'.$i.'" data-img-url="'.$sub_dir.'/'.$image.'" data-img-name="'.$image.'" class="image_bloc" data-w="'.$width.'" data-h="'.$height.'">'."\n";
+				echo "\t".'<span class="spantop black">'."\n";
+				echo "\t".'<span title="Ouvrir Slideshow" class="bouton bouton-slide" onclick="slideshow(\'start\', '.$i.');"></span>'."\n";
+				echo "\t\t".'<a title="Voir" class="bouton bouton-lien" href="'.$sub_dir.'/'.$image.'">&nbsp;</a>'."\n";
+				echo "\t\t".'<a title="Télécharger" class="bouton bouton-lien" download href="'.$sub_dir.'/'.$image.'">&nbsp;</a>'."\n";
+				echo "\t\t".'</span>'."\n";
+				echo "\t".'<img id="img_'.$i.'" src="'.$sub_dir.'/'.$image.'" alt="'.htmlspecialchars($image).'">'."\n";
+				echo '</div>'."\n";
 			}
-			echo '</div>';
+			echo '</div>'."\n";
 			$nb_pages = ceil($collection_count / $GLOBALS['image_per_page']) -1;
 			echo '<div id="pager">Page ';
 			for ($i = 0; $i <= $nb_pages; $i++) {
@@ -411,7 +404,7 @@ else {
 			} else {	
 				echo '<a href="?fol='.$GLOBALS['request_folder'].'&amp;page=all">Tout</a>';
 			}
-			echo '</div>';
+			echo '</div>'."\n";
 
 		}
 		else {
@@ -455,18 +448,18 @@ var counter = 0;
 document.onkeydown = checkKey;
 
 function slideshow(action, imageIndex) {
-	if (action == 'close') {
-		document.getElementById('slider').style.display = 'none';
+	switch(action) {
+		case 'start' : document.getElementById('slider').style.display = 'block'; counter = imageIndex; break;
+		case 'first' : counter = 0; break;
+		case 'prev' : counter = Math.max(--counter, 0); break;
+		case 'next' : counter = Math.min(++counter, curr_max); break;
+		case 'last' : counter = curr_max; break;
+		case 'close' : document.getElementById('slider').style.display = 'none'; break;
+		default : console.log('Action not supported');
 	}
 
 	var ElemImg = document.getElementById('slider-img');
-
 	var newImg = new Image();
-	if (action == 'start') { document.getElementById('slider').style.display = 'block'; counter = imageIndex; }
-	if (action == 'first') counter = 0;
-	if (action == 'prev') counter = Math.max(--counter, 0);
-	if (action == 'next') counter = Math.min(++counter, curr_max);
-	if (action == 'last') counter = curr_max;
 
 	var box_height = document.getElementById('slider-box-img-wrap').clientHeight;
 	var box_width = document.getElementById('slider-box-img-wrap').clientWidth;
@@ -515,6 +508,16 @@ function checkKey(e) {
 
 
 }
+
+</script>
+
+<!-- FlewImage Plugin
+ https://goodies.pixabay.com/javascript/flex-images/demo.html -->
+<script src="flex-images.min.js"></script>
+<script type="text/javascript">
+
+new flexImages({ selector: '#list-images', container: '.image_bloc', rowHeight: '210' });
+
 
 </script>
 
