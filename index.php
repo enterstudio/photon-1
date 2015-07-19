@@ -11,11 +11,10 @@ error_reporting(-1);
 
 $GLOBALS['main_media_dir'] = 'img';
 $GLOBALS['request_folder'] = isset($_GET['fol']) ? htmlspecialchars($_GET['fol']) : '';
-$GLOBALS['start_list_count'] = (isset($_GET['page']) and (is_numeric($_GET['page']) or $_GET['page'] == 'all')) ? $_GET['page'] : '0';
+$GLOBALS['start_list_count'] = (isset($_GET['page']) and (is_numeric($_GET['page']) or $_GET['page'] == 'all')) ? $_GET['page'] : '1';
 $GLOBALS['image_per_page'] = 50;
 
 ?>
-
 <!DOCTYPE html>
 <head>
 <meta charset="UTF-8" />
@@ -373,7 +372,7 @@ else {
 		if (!empty($img_list)) {
 			$collection_count = count($img_list);
 			if (is_numeric($GLOBALS['start_list_count'])) {
-				$img_list = array_slice($img_list, $GLOBALS['start_list_count']*$GLOBALS['image_per_page'], $GLOBALS['image_per_page'], false);
+				$img_list = array_slice($img_list, ($GLOBALS['start_list_count'] -1)*$GLOBALS['image_per_page'], $GLOBALS['image_per_page'], false);
 			}
 
 			foreach ($img_list as $i => $image) {
@@ -388,9 +387,9 @@ else {
 				echo '</div>'."\n";
 			}
 			echo '</div>'."\n";
-			$nb_pages = ceil($collection_count / $GLOBALS['image_per_page']) -1;
+			$nb_pages = ceil($collection_count / $GLOBALS['image_per_page']);
 			echo '<div id="pager">Page ';
-			for ($i = 0; $i <= $nb_pages; $i++) {
+			for ($i = 1; $i <= $nb_pages; $i++) {
 				if ((string)$i == $GLOBALS['start_list_count']) {
 
 					echo '<span>'.$i.'</span>|';
