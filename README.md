@@ -21,3 +21,7 @@ This is Photon, a ~~light-weight~~ no-weight PHP Gallery.
 
 - Credits
   * This script includes the JS-FlexImages Lib, by Pixabay : https://github.com/Pixabay/JavaScript-flexImages
+
+
+- Demo
+  * http://lehollandaisvolant.net/tout/folio/

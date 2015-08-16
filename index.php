@@ -526,7 +526,7 @@ new flexImages({ selector: '#list-images', container: '.image_bloc', rowHeight: 
 
 </div> <!-- end #axe -->
 
-<footer>Made with Photon, <a href="http://lehollandaisvolant.net/">Timo's</a> Gallery.</footer>
+<footer>Made with <a href="https://github.com/timovn/photon">Photon</a>, <a href="http://lehollandaisvolant.net/">Timo's</a> Gallery.</footer>
 
 </body>
 </html>
